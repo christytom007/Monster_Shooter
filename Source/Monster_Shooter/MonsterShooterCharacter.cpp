@@ -7,6 +7,12 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 
+#include "Projectile.h"
+#include "Animation/AnimInstance.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "MonsterShooterGameMode.h"
+
 // Sets default values
 AMonsterShooterCharacter::AMonsterShooterCharacter()
 {
@@ -52,6 +58,9 @@ void AMonsterShooterCharacter::BeginPlay()
 	GunMesh->AttachToComponent(HandsMesh,
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 		TEXT("GripPoint"));
+
+	World = GetWorld();
+	AnimInstance = HandsMesh->GetAnimInstance();
 	
 }
 
@@ -82,6 +91,31 @@ void AMonsterShooterCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 void AMonsterShooterCharacter::OnFire()
 {
+	if(World != NULL)
+	{
+		SpawnRotation = GetControlRotation();
+		SpawnLocation = ((MuzzleLocation != nullptr) ?
+			MuzzleLocation->GetComponentLocation() :
+			GetActorLocation()) + SpawnRotation.RotateVector(GunOffSet);
+
+		FActorSpawnParameters ActorSpawnParams;
+		ActorSpawnParams.SpawnCollisionHandlingOverride =
+			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+		World->SpawnActor<AProjectile>(Projectile,
+			SpawnLocation, SpawnRotation, ActorSpawnParams);
+
+		if(FireSound != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+		}
+
+		if(FireAnimation != nullptr && AnimInstance != nullptr)
+		{
+			AnimInstance->Montage_Play(FireAnimation, 1.0f);
+		}
+	}
+	
 }
 
 void AMonsterShooterCharacter::MoveForward(float Value)
@@ -108,5 +142,6 @@ void AMonsterShooterCharacter::TurnAtRate(float Rate)
 
 void AMonsterShooterCharacter::LookAtRate(float Rate)
 {
+	AddControllerPitchInput(Rate * LookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
