@@ -13,5 +13,21 @@ UCLASS()
 class MONSTER_SHOOTER_API AMonsterShooterGameMode : public AGameMode
 {
 	GENERATED_BODY()
+
+public:
+
+	void RestartGameplay(bool Won);
+
+	UPROPERTY(BlueprintReadOnly)
+	int TimerCount = 300;
+
+	void BeginPlay() override;
+
+private:
+
+	void ResetLevel();
 	
+	FTimerHandle CountDownTimerHandle = FTimerHandle();
+	
+	void CountDownTimer();
 };
