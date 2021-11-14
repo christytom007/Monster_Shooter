@@ -36,8 +36,10 @@ AEnemy::AEnemy()
 	MovementSpeed = 375.0f;
 
 	DistanceSquared = BIG_NUMBER;
+	
 
 	BaseLocation = this->GetActorLocation();
+	
 
 }
 
@@ -47,7 +49,8 @@ void AEnemy::BeginPlay()
 	Super::BeginPlay();
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnHit);
-	
+
+	BaseLocation = this->GetActorLocation();
 	
 }
 
