@@ -107,7 +107,7 @@ void AMonsterShooterCharacter::OnFire()
 
 		if(FireSound != nullptr)
 		{
-			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation(), 0.5f);
 		}
 
 		if(FireAnimation != nullptr && AnimInstance != nullptr)

@@ -99,7 +99,7 @@ void AEnemy::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 void AEnemy::OnSensed(const TArray<AActor*>& UpdatedActors)
 {
-	for(int i =0; i<UpdatedActors.Num(); i++)
+	for(int i = 0; i<UpdatedActors.Num(); i++)
 	{
 		FActorPerceptionBlueprintInfo Info;
 
@@ -107,12 +107,17 @@ void AEnemy::OnSensed(const TArray<AActor*>& UpdatedActors)
 
 		if(Info.LastSensedStimuli[0].WasSuccessfullySensed())
 		{
-			FVector dir = UpdatedActors[i]->GetActorLocation() - GetActorLocation();
-			dir.Z =0.0f;
+			
+			AMonsterShooterCharacter* Player = Cast<AMonsterShooterCharacter>(UpdatedActors[i]);
+			if(Player)
+			{
+				FVector dir = UpdatedActors[i]->GetActorLocation() - GetActorLocation();
+				dir.Z =0.0f;
 
-			CurrentVelocity = dir.GetSafeNormal() * MovementSpeed;
+				CurrentVelocity = dir.GetSafeNormal() * MovementSpeed;
 
-			SetNewRotation(UpdatedActors[i]->GetActorLocation(), GetActorLocation());
+				SetNewRotation(UpdatedActors[i]->GetActorLocation(), GetActorLocation());
+			}
 		}
 		else
 		{
